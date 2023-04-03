@@ -22,7 +22,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +33,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
 
 def pregunta_03():
@@ -50,7 +50,8 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+
+    return tbl0._c1.value_counts().sort_index()
 
 
 def pregunta_04():
@@ -65,7 +66,7 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].mean()
 
 
 def pregunta_05():
@@ -82,7 +83,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].max() 
 
 
 def pregunta_06():
@@ -94,7 +95,11 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    values = tbl1["_c4"].unique()
+    list_values = values.tolist()
+    list_upper = [letter.upper() for letter in list_values]
+    list_sorted = sorted(list_upper)
+    return list_sorted
 
 
 def pregunta_07():
@@ -110,7 +115,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby('_c1')['_c2'].sum()
 
 
 def pregunta_08():
@@ -128,7 +133,8 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    tbl0['suma'] = tbl0["_c0"] + tbl0['_c2']
+    return tbl0
 
 
 def pregunta_09():
@@ -146,7 +152,8 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    tbl0['year'] = tbl0['_c3'].str.split('-').str[0]
+    return tbl0
 
 
 def pregunta_10():
@@ -163,7 +170,9 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    data_sort = tbl0.sort_values('_c2')
+    data_grouped = data_sort.groupby('_c1')['_c2'].apply(lambda x: ':'.join(str(number) for number in x))
+    return data_grouped.to_frame()
 
 
 def pregunta_11():
@@ -182,7 +191,9 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    data_sorted = tbl1.sort_values('_c4')
+    data_grouped = data_sorted.groupby('_c0', as_index=False)['_c4'].apply(lambda x: ','.join(str(number) for number in x))
+    return data_grouped
 
 
 def pregunta_12():
@@ -200,7 +211,11 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    data_sorted = tbl2.sort_values(['_c0','_c5a'])
+    data_sorted['_c5b'] = data_sorted['_c5b'].astype(str)
+    data_sorted['_c5'] = data_sorted['_c5a'] + ':' + data_sorted['_c5b']
+    data_grouped = data_sorted.groupby('_c0', as_index=False)['_c5'].apply(lambda x: ','.join(str(number) for number in x))
+    return data_grouped
 
 
 def pregunta_13():
@@ -217,4 +232,6 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    data = tbl0.merge(tbl2, on='_c0')
+    data_grouped = data.groupby('_c1')['_c5b'].sum()
+    return data_grouped
